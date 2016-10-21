@@ -1,7 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
-import math
-x = 12
-print(x + 10 * math.sin(5 * x) + 7 * math.cos(4 * x))
+l = ['a', 'b', 'c', [1, 2, 3]]
+import copy
+a = copy.copy(l)
+b = copy.deepcopy(l)
+a.append('e')
+b.append('f')
+print(a, b, l)
+a[3][2] = 'x'
+b[3][2] = 'y'
+print(a, b, l)

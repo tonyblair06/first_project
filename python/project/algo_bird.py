@@ -3,19 +3,22 @@
 
 from random import random
 from math import sin, cos, fmod
-
-
+import matplotlib.pyplot as pyplot
 
 def letfly():
 
     #变量声明
     maxPerson = 20
-    maxLoop = 20
+    maxLoop = 10
     count = 1
 
     locationList = []
+    last_locationList = []
     speedList = []
     valueList = []
+
+    hisLocationList = []
+    hisValueList = []
 
     maxPersonValueList = []
     maxGroupValue = 0
@@ -25,11 +28,16 @@ def letfly():
     for i in range(0,maxPerson):
         locationList.append(random() * 9)
         speedList.append(random() * 6)
-        valueList.append(0)
-        maxPersonValueList.append(0)
+
+    valueList = [None]*maxPerson
+    maxPersonValueList = [None]*maxPerson
 
     #开始循环搜索
     while(True):
+        hisLocationList = []
+        hisLocationList.extend(locationList)
+        last_locationList = locationList
+
         for i in range(0,maxPerson):
             #搜索, 计算适应度
             temp = locationList[i]
@@ -51,12 +59,33 @@ def letfly():
             temp = fmod(temp, 9)
             locationList[i] = temp
 
+        hisValueList = []
+        hisValueList.extend(valueList)
+
         count = count + 1
 
         #到达循环次数，退出
         if count > maxLoop:
             # 输出种群最优值
             print(str(maxGroupValueLocation) + ': '+ str(maxGroupValue))
+
+
+            x = [i / 100000.0 for i in range(0, 900000, 1)]
+            y = [i + 10 * sin(5 * i) + 7 * cos(4 * i) for i in x]
+
+            # print(x)
+            # print(y)
+
+            pyplot.plot(x, y, 'r')
+            pyplot.xlim(-2, 11)
+            pyplot.ylim(-20, 30)
+
+            print(count)
+            print(len(hisLocationList))
+            pyplot.scatter(hisLocationList, hisValueList, c='g')
+            #pyplot.scatter(last_locationList, valueList, c='g')
+
+            pyplot.show()
             return 0
 
 letfly()
