@@ -34,6 +34,38 @@ SELECT * FROM
 
 
 
+ 
+--UTL_HTTP
+DECLARE
+  REQ     UTL_HTTP.REQ;
+  RESP    UTL_HTTP.RESP;
+  V_TEXT  VARCHAR2(4000);
+  VAL     VARCHAR2(32767);
+  V_COUNT NUMBER := 0;
+BEGIN
+  --here you can insert other code even procedure or funciton
+  --my codeing is etl monitor
+  V_TEXT := '9'; --this is the etl monitor procedure
+  IF V_TEXT IS NOT NULL THEN
+    REQ  := UTL_HTTP.BEGIN_REQUEST('http://www.163.com');
+    RESP := UTL_HTTP.GET_RESPONSE(REQ);
+  
+    LOOP
+      UTL_HTTP.READ_LINE(RESP, VAL, TRUE);
+      EXIT WHEN VAL IS NULL OR V_COUNT >= 100;
+      DBMS_OUTPUT.PUT_LINE(VAL);
+      V_COUNT := V_COUNT + 1;
+    END LOOP;
+  
+    UTL_HTTP.END_RESPONSE(RESP);
+  END IF;
+
+EXCEPTION
+  WHEN UTL_HTTP.END_OF_BODY THEN
+    UTL_HTTP.END_RESPONSE(RESP);
+END;
+
+
 
 
 
