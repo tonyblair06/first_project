@@ -191,4 +191,80 @@ ab
 ['a', 'b']
 
 
+ 
+#调用oracle
+
+import cx_Oracle                                          #引用模块cx_Oracle
+
+conn=cx_Oracle.connect('tony/123@localhost/ORCLTONY')    #连接数据库
+c=conn.cursor()                                           #获取cursor
+
+blog_list.
+x=c.execute('insert into t_test values (:1)',[str(type(blog_list))]) 
+
+conn.commit()
+#y=x.fetchall()
+c.close()                                                 #关闭cursor
+conn.close()                                              #关闭连接
+#print(y)
+
     
+    
+ 
+ #django 步骤
+ 
+#1.创建项目
+ python C:\Python27\Scripts\django-admin.py startproject myWebSite
+ 
+#2.创建应用    
+ python manage.py startapp blog
+ 
+#3初始化admin后台数据库   settings.py
+ DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.oracle',
+        'NAME': 'ORCLTONY',
+        'USER': 'tony',
+        'PASSWORD': '123',
+        'HOST': '127.0.0.1',
+        'PORT': '1521',
+    }
+}
+ 
+#4设置admin应用    settings.py
+ INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'blog',
+]
+
+
+#5启动django容器
+python manage.py runserver
+
+#6设计model     models.py
+from django.db import models
+from django.contrib import admin
+
+# Create your models here.
+class BlogsPost(models.Model):
+    title = models.CharField(max_length = 150)
+    body = models.TextField()
+    timestamp = models.DateTimeField()
+
+admin.site.register(BlogsPost)
+
+ 
+ #7再次初始化数据库
+ python manage.py makemigrations blog
+ python manage.py migrate --run-syncdb
+  
+#8创建超级用户
+python manage.py createsuperuser --username=admin --email=joe@example.com  
+
+
+

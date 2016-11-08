@@ -68,4 +68,76 @@ END;
 
 
 
+--透明网关连接mysql sqlserver
+1、配置ODBC
+    
+      mysql要先装MYSQL ODBC驱动
+      
+      linux: vi /etc/odbc.ini
+            
+            Description = MySQL test database
+            Trace = On
+            TraceFile = stderr
+            Driver = mysql                                  //数据源名称
+            SERVER = localhost
+            USER = root
+            PASSWORD = mysql
+            PORT = 3306
+            DATABASE = test
+            socket = /tmp/mysql.sock
+
+2、增加网关的initsqlserverdw.ora
+    
+      HS_FDS_CONNECT_INFO = ODBCSQLSERVERDW //此值必须等于ODBC中配置的数据源名称
+      HS_FDS_TRACE_LEVEL = OFF
+
+
+3、监听添加增加的实例
+
+    SID_LIST_LISTENER =
+      (SID_LIST =
+        (SID_DESC =
+          (SID_NAME = CLRExtProc)
+          (ORACLE_HOME = D:\app\JingZhong\product\11.2.0\dbhome_1)
+          (PROGRAM = extproc)
+          (ENVS = "EXTPROC_DLLS=ONLY:D:\app\JingZhong\product\11.2.0\dbhome_1\bin\oraclr11.dll")
+        )
+        (SID_DESC =
+          (SID_NAME = xedk)
+          (ORACLE_HOME = D:\app\JingZhong\product\11.2.0\dbhome_1)
+          (PROGRAM = dg4odbc)
+        )
+        (SID_DESC =
+          (SID_NAME = sqlserverdw)       //此值必须等于initsqlserverdw.ora中的sqlserverdw
+          (ORACLE_HOME = D:\app\JingZhong\product\11.2.0\dbhome_1)
+          (PROGRAM = dg4odbc)
+        )
+      )
+
+4、添加实例的TNS
+
+        TOSQLSERVER =
+          (DESCRIPTION =
+            (ADDRESS = (PROTOCOL = TCP)(HOST = QF-JINGZHONG-01.quark.com)(PORT = 1521))
+            (CONNECT_DATA =
+              (SERVICE_NAME = sqlserverdw)  //此值必须等于上面的SID_NAME
+            )
+            (HS = OK)
+          ) 
+
+5、增加DBLINK
+
+        create database link XEDK_MYSQL
+          connect to "xedk" identified by "admin"
+          using 'TOSQLSERVER';
+
+
+6、加后缀访问
+    
+    MYSQL        select * from 用户名.表名@DBLINK
+    
+    sqlserver：  select * from 域名.表名@DBLINK
+    
+
+
 
