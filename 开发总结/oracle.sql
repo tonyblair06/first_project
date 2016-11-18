@@ -78,7 +78,7 @@ END;
             Description = MySQL test database
             Trace = On
             TraceFile = stderr
-            Driver = mysql                                  //数据源名称
+            Driver = ODBCSQLSERVERDW          //数据源名称
             SERVER = localhost
             USER = root
             PASSWORD = mysql
